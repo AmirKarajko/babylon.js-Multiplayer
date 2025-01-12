@@ -12,8 +12,8 @@ window.onload = function () {
     // Create a light
     const light = new BABYLON.HemisphericLight("light1", BABYLON.Vector3.Up(), scene);
   
-    // Create a box
-    const box = BABYLON.MeshBuilder.CreateBox("box", {size: 2}, scene);
+    // Create a player
+    let player = new Player(scene, new BABYLON.Vector3(0, 0, 0));
   
     // Run the render loop
     engine.runRenderLoop(function () {
