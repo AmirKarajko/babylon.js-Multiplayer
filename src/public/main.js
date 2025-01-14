@@ -5,7 +5,7 @@ window.onload = function () {
   // Create the Babylon.js engine and scene
   const canvas = document.getElementById("renderCanvas");
   const engine = new BABYLON.Engine(canvas, true);
-  
+
   const scene = new BABYLON.Scene(engine);
 
   // Create a camera
@@ -38,7 +38,7 @@ window.onload = function () {
   // On new player join
   socket.on("playerConnected", (data) => {
     if (!players[data.id]) {
-      let newPlayer = new Player(scene, data.id, new BABYLON.Vector3(data.x, 0, data.z));
+      let newPlayer = new Player(scene, data.id, new BABYLON.Vector3(data.x, data.y, data.z));
       players[data.id] = newPlayer;
     }
   });
@@ -63,8 +63,7 @@ window.onload = function () {
   socket.on("emitAllPlayerPositions", (allPlayers) => {
     for (let id in allPlayers) {
       if (id !== socket.id) {
-        let newPlayer = new Player(scene, id, new BABYLON.Vector3(socket.x, 0, socket.z));
-        newPlayer.position = new BABYLON.Vector3(allPlayers[id].x, 0, allPlayers[id].z);
+        let newPlayer = new Player(scene, id, new BABYLON.Vector3(allPlayers[id].x, allPlayers[id].y, allPlayers[id].z));
         players[id] = newPlayer;
       }
     }
