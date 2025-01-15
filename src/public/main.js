@@ -25,12 +25,27 @@ window.onload = function () {
   scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, (e) => { inputMap[e.sourceEvent.key] = true; }));
   scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, (e) => { inputMap[e.sourceEvent.key] = false; }));
 
+  // Create virtual joystick
+  let leftJoystick = null;
+  if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)) {
+    leftJoystick = new BABYLON.VirtualJoystick(true);
+  }
+
   // Add player controls
   scene.onBeforeRenderObservable.add(() => {
-    if (inputMap["w"]) player.mesh.position.z -= 1;
-    if (inputMap["s"]) player.mesh.position.z += 1;
-    if (inputMap["a"]) player.mesh.position.x += 1;
-    if (inputMap["d"]) player.mesh.position.x -= 1;
+    if (leftJoystick !== null) {
+      if (leftJoystick.pressed) {
+        const moveY = -leftJoystick.deltaPosition.y * (engine.getDeltaTime() / 1000) * 10;
+        const moveX = -leftJoystick.deltaPosition.x * (engine.getDeltaTime() / 1000) * 10;
+        player.mesh.position.z += moveY;
+        player.mesh.position.x += moveX;
+      }
+    }
+
+    if (inputMap["w"]) player.mesh.position.z -= 1 * (engine.getDeltaTime() / 1000) * 10;
+    if (inputMap["s"]) player.mesh.position.z += 1 * (engine.getDeltaTime() / 1000) * 10;
+    if (inputMap["a"]) player.mesh.position.x += 1 * (engine.getDeltaTime() / 1000) * 10;
+    if (inputMap["d"]) player.mesh.position.x -= 1 * (engine.getDeltaTime() / 1000) * 10;
 
     socket.emit("playerPosition", { x: player.mesh.position.x, y: player.mesh.position.y, z: player.mesh.position.z });
   });
