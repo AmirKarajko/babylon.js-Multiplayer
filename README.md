@@ -4,5 +4,5 @@ babylon.js-Multiplayer is a 3D multiplayer game using Babylon.js for graphics an
 ## How to run
 ```
 npm install express socket.io
-node server.js
+npm run start
 ```
