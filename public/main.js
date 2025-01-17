@@ -33,19 +33,21 @@ window.onload = function () {
 
   // Add player controls
   scene.onBeforeRenderObservable.add(() => {
+    const playerSpeed = (engine.getDeltaTime() / 1000) * 10;
+
     if (leftJoystick !== null) {
       if (leftJoystick.pressed) {
-        const moveY = -leftJoystick.deltaPosition.y * (engine.getDeltaTime() / 1000) * 10;
-        const moveX = -leftJoystick.deltaPosition.x * (engine.getDeltaTime() / 1000) * 10;
-        player.mesh.position.z += moveY;
-        player.mesh.position.x += moveX;
+        const deltaY = leftJoystick.deltaPosition.y * playerSpeed;
+        const deltaX = leftJoystick.deltaPosition.x * playerSpeed;
+        player.mesh.position.z -= deltaY;
+        player.mesh.position.x -= deltaX;
       }
     }
 
-    if (inputMap["w"]) player.mesh.position.z -= 1 * (engine.getDeltaTime() / 1000) * 10;
-    if (inputMap["s"]) player.mesh.position.z += 1 * (engine.getDeltaTime() / 1000) * 10;
-    if (inputMap["a"]) player.mesh.position.x += 1 * (engine.getDeltaTime() / 1000) * 10;
-    if (inputMap["d"]) player.mesh.position.x -= 1 * (engine.getDeltaTime() / 1000) * 10;
+    if (inputMap["w"]) player.mesh.position.z -= playerSpeed;
+    if (inputMap["s"]) player.mesh.position.z += playerSpeed;
+    if (inputMap["a"]) player.mesh.position.x += playerSpeed;
+    if (inputMap["d"]) player.mesh.position.x -= playerSpeed;
 
     socket.emit("playerPosition", { x: player.mesh.position.x, y: player.mesh.position.y, z: player.mesh.position.z });
   });
