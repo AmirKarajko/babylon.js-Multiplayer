@@ -5,7 +5,6 @@ window.onload = function () {
   // Create the Babylon.js engine and scene
   const canvas = document.getElementById("renderCanvas");
   const engine = new BABYLON.Engine(canvas, true);
-
   const scene = new BABYLON.Scene(engine);
 
   // Create a camera
@@ -31,10 +30,12 @@ window.onload = function () {
     leftJoystick = new BABYLON.VirtualJoystick(true);
   }
 
-  // Add player controls
+  // Adds a function to run before each render
   scene.onBeforeRenderObservable.add(() => {
+    // Define player speed
     const playerSpeed = (engine.getDeltaTime() / 1000) * 10;
 
+    // Add virtual joystick controls
     if (leftJoystick !== null) {
       if (leftJoystick.pressed) {
         const deltaY = leftJoystick.deltaPosition.y * playerSpeed;
@@ -43,7 +44,8 @@ window.onload = function () {
         player.mesh.position.x -= deltaX;
       }
     }
-
+    
+    // Add player controls
     if (inputMap["w"]) player.mesh.position.z -= playerSpeed;
     if (inputMap["s"]) player.mesh.position.z += playerSpeed;
     if (inputMap["a"]) player.mesh.position.x += playerSpeed;
@@ -72,7 +74,7 @@ window.onload = function () {
   });
 
   // Emit all player positions on join
-  socket.on("emitAllPlayerPositions", (allPlayers) => {
+  socket.on("emitAllPlayersPosition", (allPlayers) => {
     for (let id in allPlayers) {
       if (id !== socket.id) {
         createPlayer(id, allPlayers[id].x, allPlayers[id].y, allPlayers[id].z);
