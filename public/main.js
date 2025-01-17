@@ -52,36 +52,30 @@ window.onload = function () {
     socket.emit("playerPosition", { x: player.mesh.position.x, y: player.mesh.position.y, z: player.mesh.position.z });
   });
 
+  // Create a player
+  const createPlayer = (id, x, y, z) => {
+    players[id] = new Player(scene, id, new BABYLON.Vector3(x, y, z));
+  };
+
   // On new player join
-  socket.on("playerConnected", (data) => {
-    if (!players[data.id]) {
-      let newPlayer = new Player(scene, data.id, new BABYLON.Vector3(data.x, data.y, data.z));
-      players[data.id] = newPlayer;
-    }
-  });
+  socket.on("playerConnected", (data) => createPlayer(data.id, data.x, data.y, data.z));
 
   // Update players position
   socket.on("updatePlayerPosition", (data) => {
-    if (players[data.id]) {
-      players[data.id].mesh.position.x = data.x;
-      players[data.id].mesh.position.z = data.z;
-    }
+    players[data.id].mesh.position.set(data.x, data.y, data.z);
   });
 
   // Remove player when disconnected
   socket.on("playerLeft", (id) => {
-    if (players[id]) {
-      players[id].mesh.dispose();
-      delete players[id];
-    }
+    players[id].mesh.dispose();
+    delete players[id];
   });
 
   // Emit all player positions on join
   socket.on("emitAllPlayerPositions", (allPlayers) => {
     for (let id in allPlayers) {
       if (id !== socket.id) {
-        let newPlayer = new Player(scene, id, new BABYLON.Vector3(allPlayers[id].x, allPlayers[id].y, allPlayers[id].z));
-        players[id] = newPlayer;
+        createPlayer(id, allPlayers[id].x, allPlayers[id].y, allPlayers[id].z);
       }
     }
   });
